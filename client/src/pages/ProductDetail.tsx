@@ -44,6 +44,10 @@ export default function ProductDetail() {
     { enabled: isAuthenticated && !!productId }
   );
   
+  // 游客收藏状态（本地存储）
+  const guestFavorites = !isAuthenticated ? JSON.parse(localStorage.getItem('guestFavorites') || '[]') : [];
+  const isGuestFavorited = !isAuthenticated && guestFavorites.includes(productId);
+  
   const utils = trpc.useUtils();
   const addFavoriteMutation = trpc.favorite.add.useMutation({
     onSuccess: () => {
@@ -67,8 +71,21 @@ export default function ProductDetail() {
 
   const handleFavorite = () => {
     if (!isAuthenticated) {
-      toast.error("请先登录");
-      window.location.href = getLoginUrl();
+      // 游客模式：使用本地存储
+      const favorites = JSON.parse(localStorage.getItem('guestFavorites') || '[]');
+      const index = favorites.indexOf(productId);
+      
+      if (index > -1) {
+        favorites.splice(index, 1);
+        toast.success("已取消收藏");
+      } else {
+        favorites.push(productId);
+        toast.success("收藏成功！登录后可同步到云端");
+      }
+      
+      localStorage.setItem('guestFavorites', JSON.stringify(favorites));
+      // 强制重新渲染
+      window.location.reload();
       return;
     }
 
@@ -188,7 +205,7 @@ export default function ProductDetail() {
                       >
                         <Heart
                           className={`w-5 h-5 ${
-                            favoriteStatus?.isFavorited
+                            favoriteStatus?.isFavorited || isGuestFavorited
                               ? "fill-primary text-primary"
                               : "text-muted-foreground"
                           }`}

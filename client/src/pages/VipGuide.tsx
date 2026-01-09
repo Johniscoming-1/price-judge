@@ -109,48 +109,28 @@ export default function VipGuide() {
               <CardDescription>扫描下方二维码添加客服微信/支付宝开通</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="grid md:grid-cols-2 gap-8 max-w-2xl mx-auto">
-                {/* WeChat QR Code */}
-                <div className="text-center">
-                  <div className="w-48 h-48 mx-auto bg-white rounded-lg border-2 border-primary/20 flex items-center justify-center mb-4">
-                    <div className="text-center p-6">
-                      <div className="text-4xl mb-2">💬</div>
-                      <div className="text-sm text-muted-foreground">
-                        微信二维码
-                        <br />
-                        请联系管理员获取
-                      </div>
-                    </div>
-                  </div>
-                  <Badge variant="default" className="text-sm">
-                    微信扫码添加
-                  </Badge>
-                </div>
-
+              <div className="max-w-md mx-auto">
                 {/* Alipay QR Code */}
                 <div className="text-center">
-                  <div className="w-48 h-48 mx-auto bg-white rounded-lg border-2 border-primary/20 flex items-center justify-center mb-4">
-                    <div className="text-center p-6">
-                      <div className="text-4xl mb-2">💰</div>
-                      <div className="text-sm text-muted-foreground">
-                        支付宝二维码
-                        <br />
-                        请联系管理员获取
-                      </div>
-                    </div>
+                  <div className="mb-4">
+                    <img
+                      src="/alipay-qr.jpg"
+                      alt="支付宝收款码"
+                      className="w-full max-w-sm mx-auto rounded-lg shadow-lg border-2 border-primary/20"
+                    />
                   </div>
-                  <Badge variant="default" className="text-sm">
-                    支付宝扫码添加
+                  <Badge variant="default" className="text-lg px-6 py-2">
+                    扫码支付 ￥9.90 开通 VIP
                   </Badge>
                 </div>
               </div>
 
               <div className="mt-8 text-center space-y-2">
                 <p className="text-sm text-muted-foreground">
-                  添加客服后，发送"开通VIP"即可获取开通方式
+                  使用支付宝扫码支付 ￥9.90，支付后请截图发送给客服开通 VIP
                 </p>
                 <p className="text-xs text-muted-foreground">
-                  * 具体价格和套餐请咨询客服
+                  * VIP 权限包含：90/180天历史数据、降价提醒、深度分析报告
                 </p>
               </div>
             </CardContent>

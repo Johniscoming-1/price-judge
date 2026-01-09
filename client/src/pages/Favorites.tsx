@@ -1,4 +1,5 @@
 import { trpc } from "@/lib/trpc";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -17,6 +18,18 @@ export default function Favorites() {
     undefined,
     { enabled: isAuthenticated }
   );
+  
+  // 游客收藏（本地存储）
+  const [guestFavoriteIds, setGuestFavoriteIds] = useState<number[]>([]);
+  const [guestProducts, setGuestProducts] = useState<any[]>([]);
+  
+  // 加载游客收藏的商品
+  useState(() => {
+    if (typeof window !== 'undefined' && !isAuthenticated) {
+      const ids = JSON.parse(localStorage.getItem('guestFavorites') || '[]');
+      setGuestFavoriteIds(ids);
+    }
+  });
 
   const utils = trpc.useUtils();
   const removeFavoriteMutation = trpc.favorite.remove.useMutation({
@@ -26,24 +39,8 @@ export default function Favorites() {
     },
   });
 
-  if (!isAuthenticated) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <Card className="max-w-md">
-          <CardContent className="pt-6 text-center">
-            <Heart className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
-            <h2 className="text-2xl font-bold mb-2">请先登录</h2>
-            <p className="text-muted-foreground mb-6">
-              登录后即可查看您收藏的商品
-            </p>
-            <Button onClick={() => window.location.href = getLoginUrl()}>
-              立即登录
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
+  const displayFavorites = isAuthenticated ? favorites : [];
+  const favoriteCount = isAuthenticated ? (favorites?.length || 0) : guestFavoriteIds.length;
 
   if (isLoading) {
     return (
@@ -75,11 +72,14 @@ export default function Favorites() {
         <div className="mb-8">
           <h1 className="text-3xl font-bold mb-2">我的收藏</h1>
           <p className="text-muted-foreground">
-            共 {favorites?.length || 0} 个商品
+            共 {favoriteCount} 个商品
+            {!isAuthenticated && favoriteCount > 0 && (
+              <span className="ml-2 text-primary text-sm">（本地收藏，登录后可同步）</span>
+            )}
           </p>
         </div>
 
-        {!favorites || favorites.length === 0 ? (
+        {!displayFavorites || displayFavorites.length === 0 ? (
           <Card className="max-w-md mx-auto">
             <CardContent className="pt-12 pb-12 text-center">
               <Heart className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
@@ -94,7 +94,7 @@ export default function Favorites() {
           </Card>
         ) : (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {favorites.map((fav) => (
+            {displayFavorites.map((fav: any) => (
               <Card key={fav.id} className="group hover:shadow-lg transition-shadow">
                 <CardContent className="pt-6">
                   <div className="flex gap-4 mb-4">
