@@ -42,8 +42,9 @@ export default function SearchResults() {
     setLocation(`/search?q=${encodeURIComponent(searchInput.trim())}`);
   };
 
-  const handleProductClick = (productId: number) => {
-    setLocation(`/product/${productId}`);
+  const handleProductClick = (productUrl: string) => {
+    // 直接打开商品链接，或者跳转到解析页面
+    window.open(productUrl, '_blank');
   };
 
   return (
@@ -130,11 +131,11 @@ export default function SearchResults() {
             </div>
 
             <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-              {data.products.map((product) => (
+              {data.products.map((product, index) => (
                 <Card
-                  key={product.id}
+                  key={`${product.platform}-${product.productId}-${index}`}
                   className="group hover:shadow-lg transition-all cursor-pointer"
-                  onClick={() => handleProductClick(product.id)}
+                  onClick={() => handleProductClick(product.productUrl)}
                 >
                   <CardContent className="pt-6">
                     {product.imageUrl && (

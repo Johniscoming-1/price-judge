@@ -7,6 +7,7 @@ import { TRPCError } from "@trpc/server";
 import * as db from "./db";
 import * as crawler from "./crawler";
 import * as aiAnalyzer from "./aiAnalyzer";
+import * as searchCrawler from "./searchCrawler";
 
 // VIP 权限检查中间件
 const vipProcedure = protectedProcedure.use(async ({ ctx, next }) => {
@@ -42,7 +43,8 @@ export const appRouter = router({
         pageSize: z.number().min(1).max(50).default(20),
       }))
       .query(async ({ input }) => {
-        const results = await db.searchProducts(input.keyword, input.page, input.pageSize);
+        // 使用实时搜索服务，而不是只搜索数据库
+        const results = await searchCrawler.searchProducts(input.keyword, input.page, input.pageSize);
         return results;
       }),
 
